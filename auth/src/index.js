@@ -1,7 +1,8 @@
 const express = require("express");
 const {connectDb} = require("./helpers/db");
 const app = express();
-const { port, host, db } = require("./configuration");
+const { port, host, db, apiUrl } = require("./configuration");
+const axios = require("axios");
 
 const startServer = () => {
     app.listen(port,()=> {
@@ -20,7 +21,15 @@ app.get("/api/currentUser", (req, res)=> {
         id: '1234',
         email: "foo@gmail.com"
     })
-})
+});
+
+app.get('/testWithApiData', (req, res)=> {
+    axios.get(apiUrl + '/testApiData').then(response => {
+        res.json({
+            apiData: response.data
+        })
+    })
+});
 
 
 // Initialize database connection

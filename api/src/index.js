@@ -26,15 +26,20 @@ app.get('/test', (req, res)=> {
  res.send('Our api server is working correctly');
 });
 
-app.get('/testwithcurrentuser', (req, res)=> {
+app.get('/testWithCurrentUser', (req, res)=> {
     axios.get(authApiUrl + '/currentUser').then(response => {
         res.json({
-            testwithcurrentuser: true,
+            testWithCurrentUser: true,
             currentUser: response.data
         })
     })
-})
+});
 
+app.get("/api/testApiData", (req, res)=> {
+    res.json({
+        testWithApiData: true,
+    })
+});
 
 
 const initializeApp = async () => {
