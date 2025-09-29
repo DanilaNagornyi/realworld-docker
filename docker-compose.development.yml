@@ -2,15 +2,19 @@ version: '3'
 
 services:
   frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     command: sh -c "CHOKIDAR_USEPOLLING=true npm start"
     stdin_open: true
     tty: true
     environment:
       - WATCHPACK_POLLING=true
-      - WDS_SOCKET_HOST=localhost
+      - WDS_SOCKET_HOST=realworld-docker.local
       - CHOKIDAR_USEPOLLING=true
       - FAST_REFRESH=false
-      - WDS_SOCKET_PORT=0
+      - WDS_SOCKET_PORT=80
+      - WDS_SOCKET_PATH=/sockjs-node
     volumes:
       - ./frontend:/user/src/app
       - /user/src/app/node_modules
@@ -20,3 +24,13 @@ services:
     volumes:
       - ./api/src:/user/src/app/src
       - /user/src/app/node_modules
+
+  auth:
+    command: npm run dev
+    volumes:
+      - ./auth/src:/user/src/app/src
+      - /user/src/app/node_modules
+
+  nginx:
+    volumes:
+      - ./nginx/nginx.conf.dev:/etc/nginx/conf.d/nginx.conf
