@@ -73,12 +73,19 @@ services:
    - realworld-docker-network
 
  certbot:
-   image: certbot/certbot
-   container_name: realworld-docker-certbot
-   volumes:
-    - ./certbot/conf:/etc/letsencrypt
-    - ./certbot/www:/var/www/certbot
-   entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done"
+  image: certbot/certbot:latest
+  container_name: realworld-docker-certbot
+  volumes:
+   - ./certbot/conf:/etc/letsencrypt
+   - ./certbot/www:/var/www/certbot
+   - /var/run/docker.sock:/var/run/docker.sock
+  entrypoint: >
+   sh -c "trap exit TERM;
+   while :;
+   do certbot renew --webroot -w /var/www/certbot --quiet &&
+   docker exec realworld-docker-nginx nginx -s reload;
+   sleep 12h;
+   done"
 
 volumes:
  mongodb_api:
